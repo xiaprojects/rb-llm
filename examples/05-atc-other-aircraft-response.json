@@ -1,0 +1,44 @@
+{
+  "schema": "parse-response.schema.json",
+  "description": "ATC for another aircraft: parsed for awareness, not addressed to us, no suggested actions.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "aa11bb22-cc33-4d44-8e55-ff6677889900",
+    "status": "not_addressed",
+    "kind": "atc",
+    "addressee": "other_aircraft",
+    "confidence": 0.9,
+    "normalized_text": "IXY report downwind runway 01",
+    "command": null,
+    "atc": {
+      "callsign": {
+        "heard": "india x-ray yankee",
+        "match": "other",
+        "score": 0.12
+      },
+      "station": null,
+      "instructions": [
+        {
+          "type": "report",
+          "when": "downwind",
+          "readback_required": false
+        },
+        {
+          "type": "runway",
+          "runway": "01",
+          "readback_required": true
+        }
+      ],
+      "readback": null,
+      "suggested_actions": []
+    },
+    "answer": null,
+    "engine": {
+      "path": "rules",
+      "model": null,
+      "latency_ms": 6
+    },
+    "warnings": [],
+    "error": null
+  }
+}

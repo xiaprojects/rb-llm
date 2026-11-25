@@ -1,0 +1,30 @@
+{
+  "schema": "parse-request.schema.json",
+  "description": "Free phrasing the keyword matcher misses; station name instead of a number. Push to talk, so no wake word.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "c1a7f0d4-61b2-4f7e-8c55-2a9d3e4f5a60",
+    "session_id": "rb08-20261125-0812",
+    "task": "command",
+    "lang": "en",
+    "text": "could you put perugia tower on the standby",
+    "source": "push_to_talk",
+    "catalog_hash": "3b1d0c9e8f7a6b5c",
+    "context": {
+      "wake_word": null,
+      "stations": [
+        {
+          "name": "PERUGIA TOWER",
+          "frequency_mhz": "118.100"
+        },
+        {
+          "name": "FOLIGNO RADIO",
+          "frequency_mhz": "122.500"
+        }
+      ]
+    },
+    "options": {
+      "deadline_ms": 2500
+    }
+  }
+}

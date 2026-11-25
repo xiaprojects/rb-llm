@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Models and runtime data (never commit weights)
+models/
+*.gguf
+*.onnx
+*.bin
+*.safetensors
+*.task
+*.litertlm
+
+# Benchmarks and logs
+bench/results/
+*.log
+
+# Editor
+.vscode/sftp.json
+
+# Build outputs and local runtime
+third_party/
+bin/
+catalog/
+engine.log
+models/current.gguf
+models/current.id

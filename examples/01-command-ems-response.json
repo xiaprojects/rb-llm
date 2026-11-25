@@ -1,0 +1,32 @@
+{
+  "schema": "parse-response.schema.json",
+  "description": "Result of 01: RB-08 runs ems/cht through its generic handler.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "5d0c6a52-2a7e-4c2f-9d0e-0e2f3b1c9a10",
+    "status": "ok",
+    "kind": "command",
+    "addressee": "rb",
+    "confidence": 0.94,
+    "normalized_text": "temperature cilindri",
+    "command": {
+      "action": "GET",
+      "component": "ems",
+      "parameter": "cht",
+      "target": "computer",
+      "args": {},
+      "from_context": false,
+      "requires_confirmation": false,
+      "evidence": "temperature cilindri"
+    },
+    "atc": null,
+    "answer": null,
+    "engine": {
+      "path": "rules",
+      "model": null,
+      "latency_ms": 4
+    },
+    "warnings": [],
+    "error": null
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rbavionics.com/schemas/rb-llm/1/parse-request.schema.json",
+  "title": "POST /v1/parse request",
+  "type": "object",
+  "required": ["protocol", "request_id", "lang", "text"],
+  "properties": {
+    "protocol": { "$ref": "common.schema.json#/$defs/protocol" },
+    "request_id": { "$ref": "common.schema.json#/$defs/request_id" },
+    "session_id": {
+      "description": "Stable per RB-08 run. A new request with the same session_id supersedes a queued one.",
+      "type": "string",
+      "maxLength": 64
+    },
+    "task": {
+      "description": "auto: rb-llm classifies. command / atc: force a parser.",
+      "type": "string",
+      "enum": ["auto", "command", "atc"],
+      "default": "auto"
+    },
+    "lang": { "$ref": "common.schema.json#/$defs/lang" },
+    "text": {
+      "description": "Best STT hypothesis, as recognized (not normalized).",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "alternatives": {
+      "description": "Other STT hypotheses (Vosk N-best), best first. rb-llm uses at most 2.",
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["text"],
+        "properties": {
+          "text": { "type": "string" },
+          "confidence": { "$ref": "common.schema.json#/$defs/confidence" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "stt": {
+      "type": "object",
+      "properties": {
+        "engine": { "type": "string", "examples": ["vosk"] },
+        "model": { "type": "string", "examples": ["vosk-model-it-0.22"] },
+        "confidence": { "$ref": "common.schema.json#/$defs/confidence" }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "description": "intercom: always-on input (wake word needed). push_to_talk: the pilot pressed the trigger. radio: dedicated COM audio feed.",
+      "type": "string",
+      "enum": ["intercom", "push_to_talk", "radio"],
+      "default": "intercom"
+    },
+    "catalog_hash": {
+      "description": "Hash returned by PUT /v1/catalog. Mismatch -> HTTP 409.",
+      "type": "string"
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "wake_word": {
+          "description": "Wake word already matched by RB-08 (stripped from text or not), or null.",
+          "type": ["string", "null"]
+        },
+        "target": {
+          "description": "RB-01 display name derived from the wake word.",
+          "type": ["string", "null"]
+        },
+        "own_callsign": { "$ref": "common.schema.json#/$defs/callsign" },
+        "session": {
+          "type": "object",
+          "properties": {
+            "last_action": { "$ref": "common.schema.json#/$defs/action" },
+            "last_component": { "type": ["string", "null"] },
+            "last_parameter": { "type": ["string", "null"] }
+          },
+          "additionalProperties": false
+        },
+        "radio": {
+          "type": "object",
+          "properties": {
+            "active_mhz": { "$ref": "common.schema.json#/$defs/frequency_mhz" },
+            "standby_mhz": { "$ref": "common.schema.json#/$defs/frequency_mhz" }
+          },
+          "additionalProperties": false
+        },
+        "stations": {
+          "description": "Nearby stations (max 20) to help resolve names heard on the radio.",
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "required": ["name", "frequency_mhz"],
+            "properties": {
+              "name": { "type": "string" },
+              "frequency_mhz": { "$ref": "common.schema.json#/$defs/frequency_mhz" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "airfields": {
+          "description": "Nearby airfields (max 20): code + name.",
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "required": ["code", "name"],
+            "properties": {
+              "code": { "type": "string" },
+              "name": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "last_clearance": {
+          "description": "The last ATC result for our callsign (atc object of a previous response). Used for readback checks.",
+          "$ref": "common.schema.json#/$defs/atc"
+        }
+      },
+      "additionalProperties": false
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "deadline_ms": {
+          "description": "Total time budget. rb-llm answers (possibly with error.code=timeout) before it expires.",
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 15000,
+          "default": 2500
+        },
+        "allow_llm": {
+          "description": "false = rules only (degraded / test mode).",
+          "type": "boolean",
+          "default": true
+        },
+        "readback_lang": {
+          "description": "Language of readback text; default en for ATC in English, otherwise lang.",
+          "$ref": "common.schema.json#/$defs/lang"
+        },
+        "debug": {
+          "description": "Include the debug block in the response.",
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

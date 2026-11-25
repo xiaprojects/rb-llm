@@ -1,0 +1,19 @@
+[Unit]
+Description=rb-llm engine (llama.cpp llama-server)
+After=network.target
+
+[Service]
+Type=simple
+User=rbllm
+WorkingDirectory=/opt/rb-llm
+Environment=LOAD_MODE=mmap+mlock
+EnvironmentFile=-/etc/default/rb-llm
+ExecStart=/opt/rb-llm/scripts/run-engine.sh
+Restart=always
+RestartSec=3
+# keep the model resident (mlock)
+LimitMEMLOCK=infinity
+Nice=-5
+
+[Install]
+WantedBy=multi-user.target

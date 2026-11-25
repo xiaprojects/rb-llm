@@ -1,0 +1,17 @@
+{
+  "schema": "health.schema.json#/$defs/health",
+  "description": "GET /v1/health on a warm, cool board.",
+  "body": {
+    "status": "ready",
+    "uptime_s": 5321,
+    "models_loaded": [
+      "qwen3-1.7b-instruct-q4_k_m"
+    ],
+    "catalogs": {
+      "it": "9f2c1e7a3b4d5e6f"
+    },
+    "soc_temp_c": 61.2,
+    "throttled": false,
+    "queue_depth": 0
+  }
+}

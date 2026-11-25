@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rbavionics.com/schemas/rb-llm/1/parse-response.schema.json",
+  "title": "POST /v1/parse response",
+  "type": "object",
+  "required": ["protocol", "request_id", "status", "kind", "engine"],
+  "properties": {
+    "protocol": { "$ref": "common.schema.json#/$defs/protocol" },
+    "request_id": { "$ref": "common.schema.json#/$defs/request_id" },
+    "status": {
+      "description": "ok: command or atc filled. no_match: addressed to RB but not understood. not_addressed: not for RB and not ATC for us (still parsed when it is ATC to other aircraft). error: see error.",
+      "type": "string",
+      "enum": ["ok", "no_match", "not_addressed", "error"]
+    },
+    "kind": {
+      "type": "string",
+      "enum": ["command", "atc", "readback", "other", "unknown"]
+    },
+    "addressee": {
+      "type": "string",
+      "enum": ["rb", "own_aircraft", "other_aircraft", "atc", "unknown"]
+    },
+    "confidence": { "$ref": "common.schema.json#/$defs/confidence" },
+    "normalized_text": {
+      "description": "Text after aliases, skip words, numbers and spelling normalization.",
+      "type": "string"
+    },
+    "command": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/command" }, { "type": "null" }]
+    },
+    "atc": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/atc" }, { "type": "null" }]
+    },
+    "readback_check": {
+      "description": "Only for kind=readback with context.last_clearance.",
+      "type": ["object", "null"],
+      "properties": {
+        "complete": { "type": "boolean" },
+        "mismatches": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "expected"],
+            "properties": {
+              "type": { "type": "string" },
+              "expected": { "type": "string" },
+              "heard": { "type": ["string", "null"] }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "answer": {
+      "description": "Text RB-08 may speak or show. Built from templates, never by the LLM. Commands: only clarification questions (values come from RB-01).",
+      "type": ["object", "null"],
+      "properties": {
+        "speak": { "type": ["string", "null"] },
+        "display": { "type": ["string", "null"] },
+        "lang": { "$ref": "common.schema.json#/$defs/lang" }
+      },
+      "additionalProperties": false
+    },
+    "engine": { "$ref": "common.schema.json#/$defs/engine_info" },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "error": {
+      "oneOf": [{ "$ref": "common.schema.json#/$defs/error" }, { "type": "null" }]
+    },
+    "debug": {
+      "description": "Present only with options.debug. Free-form, not part of the contract.",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    { "if": { "properties": { "status": { "const": "error" } } }, "then": { "required": ["error"], "properties": { "error": { "$ref": "common.schema.json#/$defs/error" } } } },
+    { "if": { "properties": { "status": { "const": "ok" }, "kind": { "const": "command" } }, "required": ["status", "kind"] }, "then": { "required": ["command"], "properties": { "command": { "$ref": "common.schema.json#/$defs/command" } } } },
+    { "if": { "properties": { "status": { "const": "ok" }, "kind": { "enum": ["atc", "readback"] } }, "required": ["status", "kind"] }, "then": { "required": ["atc"], "properties": { "atc": { "$ref": "common.schema.json#/$defs/atc" } } } }
+  ]
+}

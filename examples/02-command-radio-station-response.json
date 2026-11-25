@@ -1,0 +1,37 @@
+{
+  "schema": "parse-response.schema.json",
+  "description": "Radio SET by station name; RB-08 resolves the name to a frequency and writes standby only.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "c1a7f0d4-61b2-4f7e-8c55-2a9d3e4f5a60",
+    "status": "ok",
+    "kind": "command",
+    "addressee": "rb",
+    "confidence": 0.89,
+    "normalized_text": "put perugia tower standby",
+    "command": {
+      "action": "SET",
+      "component": "radio",
+      "parameter": "radio",
+      "target": null,
+      "args": {
+        "station": "perugia tower"
+      },
+      "from_context": false,
+      "requires_confirmation": false,
+      "evidence": "perugia tower"
+    },
+    "atc": null,
+    "answer": null,
+    "engine": {
+      "path": "llm",
+      "model": "qwen3-1.7b-instruct-q4_k_m",
+      "latency_ms": 910,
+      "queue_ms": 0,
+      "tokens_in": 38,
+      "tokens_out": 17
+    },
+    "warnings": [],
+    "error": null
+  }
+}

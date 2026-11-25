@@ -1,0 +1,31 @@
+{
+  "schema": "ask-response.schema.json",
+  "description": "Measured answer of qwen3-1.7b on the demo snapshot: coordinates read back, no refusal, every number grounded.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "status": "ok",
+    "kind": "ask",
+    "answer": {
+      "speak": "Latitude 43.10 north, longitude 12.25 east, 0.2 miles from Montemelino Airfield, bearing 135° true.",
+      "lang": "en"
+    },
+    "facts_used": [
+      "gps.position",
+      "airfield.nearest_1"
+    ],
+    "status_source": "demo",
+    "engine": {
+      "path": "llm",
+      "model": "qwen3-1.7b",
+      "latency_ms": 7925,
+      "queue_ms": 0,
+      "tokens_in": 1150,
+      "tokens_out": 52,
+      "cached_tokens": 1020,
+      "tok_per_s": 7.2
+    },
+    "warnings": [],
+    "error": null
+  }
+}

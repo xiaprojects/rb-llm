@@ -1,0 +1,76 @@
+{
+  "schema": "parse-response.schema.json",
+  "description": "Typed clearance for our aircraft, template readback, frequency change as a suggested action needing confirmation.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "0b7e5c2d-1a3f-4e6b-9c8d-7f6e5d4c3b20",
+    "status": "ok",
+    "kind": "atc",
+    "addressee": "own_aircraft",
+    "confidence": 0.88,
+    "normalized_text": "ICD perugia tower climb altitude 5000 ft qnh 1013 contact perugia approach 120.700",
+    "command": null,
+    "atc": {
+      "callsign": {
+        "heard": "india charlie delta",
+        "match": "own",
+        "score": 0.97
+      },
+      "station": "perugia tower",
+      "instructions": [
+        {
+          "type": "altitude",
+          "verb": "climb",
+          "value": 5000,
+          "unit": "ft",
+          "readback_required": true,
+          "evidence": "climb altitude 5000 ft"
+        },
+        {
+          "type": "qnh",
+          "value": 1013,
+          "unit": "hPa",
+          "readback_required": true,
+          "evidence": "qnh 1013"
+        },
+        {
+          "type": "frequency_change",
+          "verb": "contact",
+          "station": "perugia approach",
+          "frequency_mhz": "120.700",
+          "readback_required": true,
+          "evidence": "contact perugia approach 120.700"
+        }
+      ],
+      "readback": {
+        "required": true,
+        "text": "Climb altitude 5000 feet, QNH 1013, Perugia Approach 120.7, India Charlie Delta",
+        "lang": "en"
+      },
+      "suggested_actions": [
+        {
+          "action": "SET",
+          "component": "radio",
+          "parameter": "radio",
+          "args": {
+            "frequency_mhz": "120.700",
+            "station": "perugia approach"
+          },
+          "requires_confirmation": true
+        }
+      ]
+    },
+    "answer": {
+      "speak": null,
+      "display": "ALT CLB 5000 FT · QNH 1013 · APP 120.700",
+      "lang": "en"
+    },
+    "engine": {
+      "path": "rules",
+      "model": null,
+      "latency_ms": 9
+    },
+    "warnings": [],
+    "error": null
+  }
+}

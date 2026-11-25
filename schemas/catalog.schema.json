@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rbavionics.com/schemas/rb-llm/1/catalog.schema.json",
+  "title": "PUT /v1/catalog request and response",
+  "$defs": {
+    "put_request": {
+      "type": "object",
+      "required": ["protocol", "lang", "case_file"],
+      "properties": {
+        "protocol": { "$ref": "common.schema.json#/$defs/protocol" },
+        "lang": { "$ref": "common.schema.json#/$defs/lang" },
+        "source": { "description": "Where it came from, for logs.", "type": "string", "examples": ["/boot/firmware/rb/rbvoice-cases.it.json"] },
+        "case_file": {
+          "description": "The rbvoice-cases.<lang>.json content, verbatim. rb-llm uses wake_words, display_targets, skip_words, aliases, actions, numbers and components.*.keywords / endpoints keys.",
+          "type": "object",
+          "required": ["language", "components"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "put_response": {
+      "type": "object",
+      "required": ["protocol", "lang", "catalog_hash"],
+      "properties": {
+        "protocol": { "$ref": "common.schema.json#/$defs/protocol" },
+        "lang": { "$ref": "common.schema.json#/$defs/lang" },
+        "catalog_hash": { "description": "sha256 of the canonical (sorted-key) case file, hex, first 16 chars.", "type": "string", "pattern": "^[0-9a-f]{16}$" },
+        "components": { "type": "integer", "minimum": 0 },
+        "parameters": { "type": "integer", "minimum": 0 },
+        "warnings": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}

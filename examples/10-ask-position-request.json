@@ -1,0 +1,14 @@
+{
+  "schema": "ask-request.schema.json",
+  "description": "Pilot asks for the position; rb-llm reads the RB-01 itself (or its demo snapshot).",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+    "lang": "en",
+    "text": "where are we?",
+    "options": {
+      "deadline_ms": 12000,
+      "status_source": "auto"
+    }
+  }
+}

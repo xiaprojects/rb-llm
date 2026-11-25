@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rbavionics.com/schemas/rb-llm/1/health.schema.json",
+  "title": "GET /v1/health and GET /v1/info responses",
+  "$defs": {
+    "health": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["ready", "degraded", "loading", "error"], "description": "degraded = rules only (engine down)." },
+        "uptime_s": { "type": "integer", "minimum": 0 },
+        "models_loaded": { "type": "array", "items": { "type": "string" } },
+        "catalogs": { "type": "object", "additionalProperties": { "type": "string" }, "description": "lang -> catalog_hash" },
+        "soc_temp_c": { "type": "number" },
+        "throttled": { "type": "boolean", "description": "From vcgencmd get_throttled (any current flag)." },
+        "queue_depth": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "info": {
+      "type": "object",
+      "required": ["name", "version", "protocols", "tasks", "langs"],
+      "properties": {
+        "name": { "const": "rb-llm" },
+        "version": { "type": "string" },
+        "protocols": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/protocol" } },
+        "tasks": { "type": "array", "items": { "type": "string", "enum": ["command", "atc", "ask", "readback_check"] } },
+        "langs": {
+          "type": "object",
+          "description": "task -> languages",
+          "additionalProperties": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/lang" } }
+        },
+        "engine": { "type": "string", "examples": ["llama.cpp b5xxx"] },
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "task"],
+            "properties": {
+              "id": { "type": "string" },
+              "task": { "type": "string" },
+              "license": { "type": "string" },
+              "sha256": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

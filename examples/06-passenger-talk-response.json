@@ -1,0 +1,23 @@
+{
+  "schema": "parse-response.schema.json",
+  "description": "Intercom chatter: neither a command nor ATC.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "de4f0011-2233-4455-8677-8899aabbccdd",
+    "status": "not_addressed",
+    "kind": "other",
+    "addressee": "unknown",
+    "confidence": 0.93,
+    "normalized_text": "guarda che bel panorama sul lago",
+    "command": null,
+    "atc": null,
+    "answer": null,
+    "engine": {
+      "path": "rules+llm",
+      "model": "qwen3-1.7b-instruct-q4_k_m",
+      "latency_ms": 640
+    },
+    "warnings": [],
+    "error": null
+  }
+}

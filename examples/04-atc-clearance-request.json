@@ -1,0 +1,33 @@
+{
+  "schema": "parse-request.schema.json",
+  "description": "ATC transmission heard on the intercom (no wake word), English.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "0b7e5c2d-1a3f-4e6b-9c8d-7f6e5d4c3b20",
+    "session_id": "rb08-20261125-0812",
+    "task": "auto",
+    "lang": "it",
+    "text": "india charlie delta perugia tower climb altitude five thousand feet qnh one zero one three contact perugia approach one two zero decimal seven",
+    "source": "intercom",
+    "context": {
+      "wake_word": null,
+      "own_callsign": {
+        "registration": "I-ABCD",
+        "spoken": [
+          "india alfa bravo charlie delta",
+          "india charlie delta",
+          "piper charlie delta"
+        ],
+        "aircraft_type": "P28A"
+      },
+      "radio": {
+        "active_mhz": "118.100",
+        "standby_mhz": "122.500"
+      }
+    },
+    "options": {
+      "deadline_ms": 4000,
+      "readback_lang": "en"
+    }
+  }
+}

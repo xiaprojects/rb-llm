@@ -1,0 +1,12 @@
+{
+  "schema": "catalog.schema.json#/$defs/put_response",
+  "description": "Answer to PUT /v1/catalog with rbvoice-cases.it.json.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "lang": "it",
+    "catalog_hash": "9f2c1e7a3b4d5e6f",
+    "components": 8,
+    "parameters": 62,
+    "warnings": []
+  }
+}

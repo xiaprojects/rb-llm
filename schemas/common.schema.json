@@ -1,0 +1,750 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rbavionics.com/schemas/rb-llm/1/common.schema.json",
+  "title": "rb-llm/1 shared definitions",
+  "$defs": {
+    "protocol": {
+      "description": "Protocol name and major version. Minor additions are backward compatible.",
+      "type": "string",
+      "pattern": "^rb-llm/1(\\.[0-9]+)?$"
+    },
+    "request_id": {
+      "description": "Client-generated id, echoed in the response. UUID recommended.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "lang": {
+      "type": "string",
+      "enum": [
+        "it",
+        "en",
+        "fr",
+        "es",
+        "de"
+      ]
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "GET",
+        "SET",
+        "DEL"
+      ]
+    },
+    "frequency_mhz": {
+      "description": "VHF frequency as text with exactly three decimals, as rbvoice writes it.",
+      "type": "string",
+      "pattern": "^1[0-3][0-9]\\.[0-9]{3}$"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "airfield": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "ICAO, GPS, local code or ident without dash, as spelled.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Name as heard (normalized). RB-08 resolves it against db.airfields.json.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nearest": {
+          "description": "True for 'nearest airfield' requests.",
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "station": {
+      "description": "Radio station by name, as heard (e.g. 'perugia tower'). RB-08 resolves it to a frequency.",
+      "type": "string",
+      "minLength": 1
+    },
+    "callsign": {
+      "type": "object",
+      "required": [
+        "registration"
+      ],
+      "properties": {
+        "registration": {
+          "type": "string",
+          "examples": [
+            "I-ABCD"
+          ]
+        },
+        "spoken": {
+          "description": "Spoken forms to accept, lowercase, e.g. 'india alfa bravo charlie delta', 'india charlie delta', 'piper charlie delta'.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "aircraft_type": {
+          "type": "string",
+          "examples": [
+            "P28A"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "description": "The normalized words a value was extracted from. Every number in an output must have evidence.",
+      "type": "string"
+    },
+    "error": {
+      "type": "object",
+      "required": [
+        "code",
+        "message"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "timeout",
+            "busy",
+            "loading",
+            "bad_request",
+            "catalog_mismatch",
+            "unsupported_lang",
+            "unsupported_task",
+            "engine_failure",
+            "internal"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "retry_after_ms": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "engine_info": {
+      "type": "object",
+      "required": [
+        "path",
+        "latency_ms"
+      ],
+      "properties": {
+        "path": {
+          "description": "Which stage produced the result.",
+          "type": "string",
+          "enum": [
+            "rules",
+            "llm",
+            "rules+llm",
+            "none"
+          ]
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "examples": [
+            "qwen3-1.7b-instruct-q4_k_m"
+          ]
+        },
+        "latency_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "queue_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens_in": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tokens_out": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cached_tokens": {
+          "description": "Prompt tokens served from the KV cache (static prompt reuse).",
+          "type": "integer",
+          "minimum": 0
+        },
+        "tok_per_s": {
+          "description": "Generation speed of this request.",
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "command": {
+      "type": "object",
+      "required": [
+        "action",
+        "component",
+        "parameter"
+      ],
+      "properties": {
+        "action": {
+          "$ref": "#/$defs/action"
+        },
+        "component": {
+          "description": "Component name from the rbvoice case file (ems, situation, radio, autopilot, airfields, timers, traffic, display, ...).",
+          "type": "string"
+        },
+        "parameter": {
+          "description": "Parameter id: a keyword value / endpoint key of that component.",
+          "type": "string"
+        },
+        "target": {
+          "description": "RB-01 display name (primario, secondario, display) when known.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "args": {
+          "type": "object",
+          "properties": {
+            "frequency_mhz": {
+              "$ref": "#/$defs/frequency_mhz"
+            },
+            "station": {
+              "$ref": "#/$defs/station"
+            },
+            "airfield": {
+              "$ref": "#/$defs/airfield"
+            },
+            "duration_s": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "page": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "from_context": {
+          "description": "True when component/parameter were taken from the session (follow-up question).",
+          "type": "boolean"
+        },
+        "requires_confirmation": {
+          "description": "RB-08 must ask the pilot before executing.",
+          "type": "boolean"
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence"
+        }
+      },
+      "additionalProperties": false
+    },
+    "instruction": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "altitude",
+            "heading",
+            "speed",
+            "squawk",
+            "qnh",
+            "frequency_change",
+            "runway",
+            "cleared_takeoff",
+            "cleared_land",
+            "line_up",
+            "hold_short",
+            "taxi",
+            "cleared_zone",
+            "direct_to",
+            "join_circuit",
+            "report",
+            "traffic_info",
+            "wind",
+            "go_around",
+            "hold",
+            "standby",
+            "say_again",
+            "unparsed"
+          ]
+        },
+        "verb": {
+          "type": "string",
+          "enum": [
+            "climb",
+            "descend",
+            "maintain",
+            "contact",
+            "monitor"
+          ]
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string",
+          "enum": [
+            "ft",
+            "FL",
+            "kt",
+            "hPa",
+            "inHg"
+          ]
+        },
+        "restriction": {
+          "description": "e.g. 'not above', 'or below'.",
+          "type": "string"
+        },
+        "turn": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "left",
+            "right",
+            null
+          ]
+        },
+        "code": {
+          "type": "string",
+          "pattern": "^[0-7]{4}$"
+        },
+        "ident": {
+          "type": "boolean"
+        },
+        "station": {
+          "$ref": "#/$defs/station"
+        },
+        "frequency_mhz": {
+          "$ref": "#/$defs/frequency_mhz"
+        },
+        "runway": {
+          "type": "string",
+          "pattern": "^(0[1-9]|[12][0-9]|3[0-6])[LCR]?$"
+        },
+        "wait": {
+          "type": "boolean"
+        },
+        "point": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "via": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "zone": {
+          "type": "string"
+        },
+        "fix": {
+          "type": "string"
+        },
+        "leg": {
+          "type": "string",
+          "enum": [
+            "downwind",
+            "base",
+            "final",
+            "crosswind",
+            "upwind"
+          ]
+        },
+        "side": {
+          "type": "string",
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "when": {
+          "type": "string"
+        },
+        "clock": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "distance_nm": {
+          "type": "number",
+          "minimum": 0
+        },
+        "level": {
+          "type": "string"
+        },
+        "aircraft": {
+          "type": "string"
+        },
+        "direction": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 360
+        },
+        "speed_kt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gust_kt": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "text": {
+          "type": "string"
+        },
+        "readback_required": {
+          "type": "boolean"
+        },
+        "evidence": {
+          "$ref": "#/$defs/evidence"
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "altitude"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "verb",
+              "value",
+              "unit"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "heading"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "value"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "speed"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "value"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "squawk"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "code"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "qnh"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "value",
+              "unit"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "frequency_change"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "verb"
+            ],
+            "anyOf": [
+              {
+                "required": [
+                  "frequency_mhz"
+                ]
+              },
+              {
+                "required": [
+                  "station"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "runway"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "runway"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "hold_short"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "point"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "taxi"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "to"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "cleared_zone"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "zone"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "direct_to"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "fix"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "join_circuit"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "leg"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "report"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "when"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "wind"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "direction",
+              "speed_kt"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "unparsed"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "text"
+            ]
+          }
+        }
+      ]
+    },
+    "suggested_action": {
+      "description": "An RB command derived from an ATC instruction. Always requires pilot confirmation.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/command"
+        },
+        {
+          "properties": {
+            "requires_confirmation": {
+              "const": true
+            }
+          },
+          "required": [
+            "requires_confirmation"
+          ]
+        }
+      ]
+    },
+    "atc": {
+      "type": "object",
+      "required": [
+        "callsign",
+        "instructions"
+      ],
+      "properties": {
+        "callsign": {
+          "type": "object",
+          "required": [
+            "match"
+          ],
+          "properties": {
+            "heard": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "match": {
+              "type": "string",
+              "enum": [
+                "own",
+                "other",
+                "none"
+              ]
+            },
+            "score": {
+              "$ref": "#/$defs/confidence"
+            }
+          },
+          "additionalProperties": false
+        },
+        "station": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "instructions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/instruction"
+          }
+        },
+        "readback": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "required": [
+            "required",
+            "text"
+          ],
+          "properties": {
+            "required": {
+              "type": "boolean"
+            },
+            "text": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "lang": {
+              "$ref": "#/$defs/lang"
+            }
+          },
+          "additionalProperties": false
+        },
+        "suggested_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/suggested_action"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,78 @@
+    <!-- AI Voice (rb-llm). Source: rb-llm docs/website/rb-08-ai-voice.md; phrases verified by scripts/verify_phrases.py -->
+    <section class="rb-section" id="ai-voice">
+        <div class="container px-4 px-lg-5">
+            <header class="rb-head rb-reveal">
+                <p class="rb-eyebrow">AI Voice &middot; in development</p>
+                <h2>Talk to your aircraft. In your own words.</h2>
+            </header>
+            <article class="rb-product">
+                <div class="rb-product-wide rb-product-wide--split">
+                    <div>
+                        <p class="rb-eyebrow">Benefits</p>
+                        <h4 class="rb-product-wide-title">Why it helps</h4>
+                        <ul class="rb-features">
+                            <li><b>Speak naturally:</b> &ldquo;how fast are we going?&rdquo; or &ldquo;put Perugia Approach on the standby&rdquo;, with no fixed commands to memorise</li>
+                            <li><b>Ask the aircraft:</b> position, nearest airfield, altitude, engine, traffic and radio, answered from your own instruments through the RB-01</li>
+                            <li><b>No invented numbers:</b> the software computes distances and bearings, and checks every number in an answer against your instrument data</li>
+                            <li><b>ATC calls for you:</b> clearances for your callsign as a short list with the readback text; a new frequency is only a suggestion until you confirm</li>
+                            <li><b>Ignores the chatter:</b> passengers and calls for other aircraft are recognised and left alone</li>
+                            <li><b>Offline and open:</b> runs on board on a dedicated Raspberry Pi 5, no cloud or subscription, GPL-3.0 software and open-weight models</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <p class="rb-eyebrow">Ask</p>
+                        <h4 class="rb-product-wide-title">Sample answers</h4>
+                        <table class="rb-spec">
+                            <caption class="visually-hidden">Questions and the answers RB-08 AI Voice gave from recorded RB-01 data</caption>
+                            <tbody>
+                                <tr><th scope="row">&ldquo;Where are we?&rdquo;</th><td>&ldquo;Latitude 43.10 north, longitude 12.25 east, 0.2 miles from Montemelino Airfield, bearing 135&deg; true, elevation 731 ft.&rdquo;</td></tr>
+                                <tr><th scope="row">&ldquo;How high are we?&rdquo;</th><td>&ldquo;We are at 763 feet MSL, with the barometric altimeter reading 546 feet.&rdquo;</td></tr>
+                                <tr><th scope="row">&ldquo;Is there any traffic around us?&rdquo;</th><td>&ldquo;There is 1 aircraft in traffic: RYR465X, 34,000 ft, 26.6 NM, bearing 175&deg;, track 325&deg;, 424 kt.&rdquo;</td></tr>
+                                <tr><th scope="row">&ldquo;How much fuel do we have?&rdquo;</th><td>&ldquo;Fuel remaining is not available: there is no reading from the fuel sensor.&rdquo;</td></tr>
+                                <tr><th scope="row">&ldquo;Qual &egrave; il campo pi&ugrave; vicino?&rdquo;</th><td>&ldquo;Il campo pi&ugrave; vicino &egrave; Montemelino Airfield, a 0,2 miglia, rilevamento 135&deg;.&rdquo;</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="rb-muted">Answers quoted as the engine gave them, from real RB-01 data recorded on the ground near Perugia.</p>
+                    </div>
+                </div>
+                <div class="rb-product-wide rb-product-wide--split">
+                    <div>
+                        <p class="rb-eyebrow">Command</p>
+                        <h4 class="rb-product-wide-title">Say it your way</h4>
+                        <table class="rb-spec">
+                            <caption class="visually-hidden">Voice commands and what RB-08 does</caption>
+                            <tbody>
+                                <tr><th scope="row">&ldquo;Computer, how hot is the oil?&rdquo;</th><td>reads oil temperature</td></tr>
+                                <tr><th scope="row">&ldquo;Computer, tune the radio to one two two decimal five&rdquo;</th><td>standby 122.500</td></tr>
+                                <tr><th scope="row">&ldquo;Computer, put Perugia Approach on the standby&rdquo;</th><td>standby by station name</td></tr>
+                                <tr><th scope="row">&ldquo;Computer, direct to Lima India Romeo Zulu&rdquo;</th><td>destination LIRZ</td></tr>
+                                <tr><th scope="row">&ldquo;Primary, show the engine page&rdquo;</th><td>engine page</td></tr>
+                                <tr><th scope="row">&ldquo;Computer, quanto carburante nel secondo serbatoio?&rdquo;</th><td>reads fuel tank 2</td></tr>
+                                <tr><th scope="row">&ldquo;What a beautiful view of the lake&rdquo;</th><td>nothing: not for the RB</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <p class="rb-eyebrow">ATC</p>
+                        <h4 class="rb-product-wide-title">Clearances in writing</h4>
+                        <table class="rb-spec">
+                            <caption class="visually-hidden">ATC calls for callsign I-ABCD and the readback RB-08 shows</caption>
+                            <tbody>
+                                <tr><th scope="row">&ldquo;India Charlie Delta, climb altitude five thousand feet, QNH one zero one three&rdquo;</th><td>&ldquo;Climb 5000 feet, QNH 1013, India Charlie Delta&rdquo;</td></tr>
+                                <tr><th scope="row">&ldquo;India Charlie Delta, turn left heading two seven zero, descend two thousand feet, squawk four three two one&rdquo;</th><td>&ldquo;Turn left heading 270, descend 2000 feet, squawk 4321, India Charlie Delta&rdquo;</td></tr>
+                                <tr><th scope="row">&ldquo;India Charlie Delta, contact Perugia Approach one two zero decimal seven&rdquo;</th><td>suggests standby 120.700, after you confirm</td></tr>
+                                <tr><th scope="row">&ldquo;India X-ray Yankee, report downwind runway zero one&rdquo;</th><td>another aircraft: no action</td></tr>
+                            </tbody>
+                        </table>
+                        <p class="rb-muted">
+                            Supplementary information, not certified avionics. Speech recognition and language models make
+                            mistakes: check every value on the display or the approved instruments, and always listen to, read
+                            back and follow ATC yourself.
+                        </p>
+                    </div>
+                </div>
+            </article>
+            <p class="rb-caption">An optional engine for RB-08, in development as the open-source <a href="https://github.com/xiaprojects/rb-llm" rel="noopener">rb-llm</a> project. Phrases tested in English and Italian.</p>
+        </div>
+    </section>
+

@@ -1,0 +1,17 @@
+[Unit]
+Description=rb-llm API and web UI (RB-08 language engine)
+After=network.target rb-llm-engine.service
+Wants=rb-llm-engine.service
+
+[Service]
+Type=simple
+User=rbllm
+WorkingDirectory=/opt/rb-llm
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=-/etc/default/rb-llm
+ExecStart=/usr/bin/python3 -m rbllm serve
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

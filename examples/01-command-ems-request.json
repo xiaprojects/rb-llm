@@ -1,0 +1,50 @@
+{
+  "schema": "parse-request.schema.json",
+  "description": "Italian EMS question after the wake word (rules fast path expected).",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "5d0c6a52-2a7e-4c2f-9d0e-0e2f3b1c9a10",
+    "session_id": "rb08-20261125-0812",
+    "task": "auto",
+    "lang": "it",
+    "text": "computer dimmi le temperature dei cilindri",
+    "alternatives": [
+      {
+        "text": "computer dimmi le temperature dei cilindro",
+        "confidence": 0.41
+      }
+    ],
+    "stt": {
+      "engine": "vosk",
+      "model": "vosk-model-it-0.22",
+      "confidence": 0.86
+    },
+    "source": "intercom",
+    "catalog_hash": "9f2c1e7a3b4d5e6f",
+    "context": {
+      "wake_word": "computer",
+      "target": "computer",
+      "own_callsign": {
+        "registration": "I-ABCD",
+        "spoken": [
+          "india alfa bravo charlie delta",
+          "india charlie delta",
+          "piper charlie delta"
+        ],
+        "aircraft_type": "P28A"
+      },
+      "session": {
+        "last_action": "GET",
+        "last_component": "situation",
+        "last_parameter": "GPSAltitudeMSL"
+      },
+      "radio": {
+        "active_mhz": "122.500",
+        "standby_mhz": "118.100"
+      }
+    },
+    "options": {
+      "deadline_ms": 2500
+    }
+  }
+}

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rb-llm console</title>
+<link rel="stylesheet" href="/web/style.css">
+</head>
+<body>
+<header>
+  <div class="brand">rb-llm <span class="muted">console</span></div>
+  <div id="health" class="pills"><span class="pill">connecting…</span></div>
+</header>
+
+<main>
+  <section class="col-main">
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-task="ask" role="tab">Ask aircraft</button>
+      <button class="tab" data-task="command" role="tab">Command</button>
+      <button class="tab" data-task="atc" role="tab">ATC</button>
+      <button class="tab" data-task="auto" role="tab">Auto</button>
+    </nav>
+
+    <p id="task-help" class="help"></p>
+
+    <form id="form" autocomplete="off">
+      <div class="row">
+        <select id="lang" aria-label="language">
+          <option value="en">EN</option><option value="it">IT</option><option value="fr">FR</option>
+          <option value="es">ES</option><option value="de">DE</option>
+        </select>
+        <input id="text" type="text" placeholder="Type what the pilot or ATC says…" maxlength="500" required>
+        <button id="send" type="submit">Send</button>
+      </div>
+      <div class="row options">
+        <label class="opt-atc opt-auto">Own callsign <input id="callsign" value="I-ABCD" size="8"></label>
+        <label class="opt-command opt-auto"><input type="checkbox" id="ptt"> push to talk (no wake word)</label>
+        <label class="opt-command"><span>previous</span> <input id="previous" placeholder="ems.fuel1" size="12"></label>
+        <label>deadline <input id="deadline" type="number" min="500" max="30000" step="500" value="" placeholder="auto" size="6"> ms</label>
+        <label><input type="checkbox" id="debug" checked> debug</label>
+      </div>
+    </form>
+
+    <div id="examples" class="chips"></div>
+
+    <article id="result" class="card hidden">
+      <div id="result-main" class="answer"></div>
+      <div id="result-badges" class="pills"></div>
+      <div id="result-detail"></div>
+      <ul id="result-warnings" class="warnings"></ul>
+      <details><summary>Response JSON</summary><pre id="result-json"></pre></details>
+      <details id="debug-box"><summary>Model output / debug</summary><pre id="result-debug"></pre></details>
+    </article>
+
+    <h3>History</h3>
+    <table id="history"><thead><tr><th>task</th><th>input</th><th>result</th><th>ms</th></tr></thead><tbody></tbody></table>
+  </section>
+
+  <aside class="col-side">
+    <div class="side-head">
+      <h3>Aircraft status</h3>
+      <select id="status-source" aria-label="status source">
+        <option value="auto">auto (RB-01, else demo)</option>
+        <option value="rb">RB-01 live</option>
+        <option value="demo">demo snapshot</option>
+        <option value="custom">custom JSON</option>
+      </select>
+      <button id="status-refresh" type="button" title="refresh">↻</button>
+    </div>
+    <p class="help">What the model sees for <b>Ask aircraft</b>. Values are computed in code: the model only reads them.</p>
+    <div id="status-custom" class="hidden">
+      <textarea id="status-json" spellcheck="false"></textarea>
+      <button id="status-apply" type="button">Preview facts</button>
+    </div>
+    <ul id="facts" class="facts"></ul>
+  </aside>
+</main>
+
+<script src="/web/app.js"></script>
+</body>
+</html>

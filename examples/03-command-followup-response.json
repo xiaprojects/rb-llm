@@ -1,0 +1,32 @@
+{
+  "schema": "parse-response.schema.json",
+  "description": "fuel2 inferred from the previous fuel1 question.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "7e3f2a10-9b8c-4d6e-a1f2-3c4d5e6f7a80",
+    "status": "ok",
+    "kind": "command",
+    "addressee": "rb",
+    "confidence": 0.82,
+    "normalized_text": "secondo serbatoio",
+    "command": {
+      "action": "GET",
+      "component": "ems",
+      "parameter": "fuel2",
+      "target": "computer",
+      "args": {},
+      "from_context": true,
+      "requires_confirmation": false,
+      "evidence": "secondo serbatoio"
+    },
+    "atc": null,
+    "answer": null,
+    "engine": {
+      "path": "llm",
+      "model": "qwen3-1.7b-instruct-q4_k_m",
+      "latency_ms": 780
+    },
+    "warnings": [],
+    "error": null
+  }
+}

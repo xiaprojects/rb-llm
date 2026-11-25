@@ -1,0 +1,19 @@
+{
+  "schema": "parse-response.schema.json",
+  "description": "HTTP 504: deadline expired; RB-08 falls back to its keyword matcher.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "0f0e0d0c-0b0a-4908-8706-050403020100",
+    "status": "error",
+    "kind": "unknown",
+    "engine": {
+      "path": "none",
+      "model": "qwen3-4b-instruct-q4_k_m",
+      "latency_ms": 2500
+    },
+    "error": {
+      "code": "timeout",
+      "message": "deadline 2500 ms expired during generation"
+    }
+  }
+}

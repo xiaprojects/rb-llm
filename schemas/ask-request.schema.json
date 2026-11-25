@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rbavionics.com/schemas/rb-llm/1/ask-request.schema.json",
+  "title": "POST /v1/ask request: a question answered from the aircraft status",
+  "type": "object",
+  "required": [
+    "protocol",
+    "lang",
+    "text"
+  ],
+  "properties": {
+    "protocol": {
+      "$ref": "common.schema.json#/$defs/protocol"
+    },
+    "request_id": {
+      "$ref": "common.schema.json#/$defs/request_id"
+    },
+    "session_id": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "lang": {
+      "$ref": "common.schema.json#/$defs/lang"
+    },
+    "text": {
+      "description": "The pilot's question, as recognized.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "aircraft_status": {
+      "description": "Optional RB-01 snapshot keyed by endpoint ('/getSituation', '/getEMS', '/radio', '/getTraffic', '/settings/db.airfields.json'), raw RB-01 JSON. When absent, rb-llm reads the RB-01 itself (--rb-url) or uses its demo snapshot.",
+      "type": "object"
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "deadline_ms": {
+          "type": "integer",
+          "minimum": 200,
+          "maximum": 30000,
+          "default": 8000
+        },
+        "status_source": {
+          "description": "Where rb-llm gets the status when aircraft_status is absent.",
+          "type": "string",
+          "enum": [
+            "auto",
+            "rb",
+            "demo"
+          ],
+          "default": "auto"
+        },
+        "debug": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

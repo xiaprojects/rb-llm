@@ -1,0 +1,19 @@
+{
+  "schema": "parse-request.schema.json",
+  "description": "Follow-up question that names no parameter; session context resolves it.",
+  "body": {
+    "protocol": "rb-llm/1",
+    "request_id": "7e3f2a10-9b8c-4d6e-a1f2-3c4d5e6f7a80",
+    "session_id": "rb08-20261125-0812",
+    "lang": "it",
+    "text": "computer e il secondo serbatoio",
+    "context": {
+      "wake_word": "computer",
+      "session": {
+        "last_action": "GET",
+        "last_component": "ems",
+        "last_parameter": "fuel1"
+      }
+    }
+  }
+}

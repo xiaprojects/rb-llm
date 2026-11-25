@@ -1,0 +1,8 @@
+# /etc/default/rb-llm — read by rb-llm.service and rb-llm-engine.service
+# RB-01 base URL for live aircraft status (empty = demo snapshot only)
+RBLLM_RB_URL=
+RBLLM_DEMO_STATUS=/opt/rb-llm/data/demo-rb01.json
+RBLLM_PORT=8091
+# Engine
+THREADS=4
+CTX_PER_SLOT=4096
