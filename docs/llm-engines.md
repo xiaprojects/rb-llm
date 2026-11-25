@@ -10,7 +10,7 @@ This document compares the runtimes and models that run on a Raspberry Pi 5 (8 G
 | KV prompt caching | The system prompt and catalog are ~1–2k tokens. Reprocessing them per request costs seconds. |
 | Fast prefill and short decode on ARM CPU | See the [latency budget](hardware-raspberry-pi5.md#latency-budget-for-one-voice-command). |
 | Multilingual: it, en, fr, es, de | Commands come in all five languages. ATC is mostly English, plus Italian. |
-| Permissive license | The repo is GPL-3.0 and public. Users download the weights themselves, but we recommend models whose licenses allow redistribution and fine-tuning. |
+| Permissive license | The repo is AGPL-3.0 and public. Users download the weights themselves, but we recommend models whose licenses allow redistribution and fine-tuning. |
 | Fine-tunable (LoRA) | Phase 3 may fine-tune on synthetic aviation data. |
 
 ## Runtimes

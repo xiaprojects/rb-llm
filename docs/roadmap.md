@@ -123,4 +123,4 @@ Each evaluation run records the model, its SHA-256, the quantization, the llama.
 4. **Audio source for ATC:** is a separate COM audio feed available (`source: "radio"`), or only the mixed intercom?
 5. **Own callsign:** read from the RB-01 settings (is there a field?) or from `rbvoice.sh`?
 6. **Speaking ATC readbacks:** should the RB ever *speak* a readback hint, or only display it? (Default: display only.)
-7. **License of datasets:** GPL-3.0 like the code, or CC-BY-4.0 so others can reuse them?
+7. **License of datasets:** AGPL-3.0 like the code, or CC-BY-4.0 so others can reuse them?

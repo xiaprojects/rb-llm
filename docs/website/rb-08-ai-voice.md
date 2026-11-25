@@ -45,7 +45,7 @@ fallback.
 **Offline and private.** No cloud and no subscription. Everything runs on a dedicated Raspberry
 Pi 5 in the aircraft, and your voice and flight data stay on board.
 
-**Open source, open models.** The software is GPL-3.0 and the default model (Qwen3, Apache-2.0)
+**Open source, open models.** The software is AGPL-3.0 and the default model (Qwen3, Apache-2.0)
 is open-weight. You can inspect it, rebuild it, change it, and test new models with the same checks.
 
 ## Example phrases

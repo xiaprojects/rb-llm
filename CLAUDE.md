@@ -40,7 +40,7 @@ Everything runs offline, on the device. No cloud.
 - **Catalog comes from rbvoice.** Component, parameter and endpoint names are the ones in `../rbvoice/rbvoice-cases.<lang>.json`. Do not invent parallel names. Their keyword *values* are the parameter IDs.
 - **Units in the protocol:** frequencies are strings with three decimals (`"118.500"`, the rbvoice format), altitudes are integer feet or integer flight levels, headings are integers 1–360, QNH is integer hPa, durations are integer seconds.
 - **Languages:** it (reference, like rbvoice), en, fr, es, de for commands. ATC: en first, it second.
-- **License hygiene:** the repo is GPL-3.0 (same as rbvoice). Never commit model weights. Download scripts fetch them, and each model's license is recorded in `docs/llm-engines.md`.
+- **License hygiene:** the repo is AGPL-3.0 (same as rbvoice). Never commit model weights. Download scripts fetch them, and each model's license is recorded in `docs/llm-engines.md`.
 - **Target Python 3.11** (Raspberry Pi OS Bookworm), like rbvoice.
 
 ## Related repositories (siblings in `~/`)
