@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install ruff
+      - name: ruff
+        run: ruff check --output-format=github rbllm tests tools scripts
+      - name: shellcheck
+        run: shellcheck --severity=warning scripts/*.sh
+
+  # Protocol examples must validate against schemas/ (source of truth).
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install jsonschema
+      - run: python tools/validate_examples.py
+
+  # Unit + HTTP tests with a fake engine: no llama.cpp build, no model download.
+  test:
+    name: test (py${{ matrix.python }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ["3.11", "3.12", "3.13"]
+        include:
+          # aarch64, Python 3.11: closest to the Pi 5 on Raspberry Pi OS Bookworm
+          - os: ubuntu-24.04-arm
+            python: "3.11"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      # The Pi runs with the stdlib only: prove the tests pass without any pip package first.
+      - name: tests (stdlib only)
+        run: python -m unittest discover -s tests
+      - name: tests with schema validation + coverage
+        run: |
+          pip install jsonschema coverage
+          python -m coverage run --source=rbllm -m unittest discover -s tests
+          python -m coverage report -m | tee coverage.txt
+          { echo '### Coverage (py${{ matrix.python }}, ${{ matrix.os }})'; echo '```'; cat coverage.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"

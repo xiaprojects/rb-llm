@@ -1,6 +1,5 @@
 """Unit tests: normalizer, aircraft status, catalog, task post-processing (fake engine)."""
 import json
-import time
 import unittest
 
 from helpers import CATALOG_DIR, DEMO, FakeEngine, assert_valid

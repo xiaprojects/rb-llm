@@ -61,6 +61,9 @@ make catalog              # copy ../rbvoice/rbvoice-cases.*.json into catalog/ (
 make run                  # engine (background, engine.log) + API/web UI on :8091; WARM_LANG=it|en|... ; RB_URL=http://<rb01>
 make test                 # stdlib unittest, fake engine, no model needed (~1 s); validates responses against schemas if jsonschema is installed
 make validate             # examples/*.json against schemas/
+make lint                 # ruff (ruff.toml) + shellcheck on scripts/*.sh
+make ci                   # lint + test + validate: what .github/workflows/ci.yml runs (also py3.11 on arm64)
+make coverage             # tests under coverage (pip install coverage)
 make check-refusal        # GPS/position questions through /v1/ask; add --baseline via: python3 scripts/refusal_check.py --baseline
 make bench                # llama-bench on the active model
 python3 scripts/verify_phrases.py --lang en   # website phrases (data/website-phrases.json) -> docs/website/phrase-results.md; re-run after model/prompt/tasks changes

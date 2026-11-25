@@ -28,3 +28,8 @@ catalog/
 engine.log
 models/current.gguf
 models/current.id
+
+# Test coverage
+.coverage
+coverage.txt
+htmlcov/

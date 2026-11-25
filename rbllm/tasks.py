@@ -145,7 +145,7 @@ def match_callsign(heard: Optional[str], own: Optional[Dict[str, Any]]) -> Dict[
         return {"heard": h, "match": "own", "score": 1.0}
     if prefix and len(letters) >= 2 and reg.endswith(letters):
         return {"heard": h, "match": "own", "score": 0.9}
-    common = sum(1 for a, b in zip(letters[::-1], reg[::-1]) if a == b)
+    common = sum(1 for a, b in zip(letters[::-1], reg[::-1], strict=False) if a == b)
     return {"heard": h, "match": "other", "score": round(common / max(len(reg), 1), 2)}
 
 

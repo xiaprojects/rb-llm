@@ -16,7 +16,7 @@ import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 _THINK = re.compile(r"<think>.*?</think>", re.DOTALL)
 
@@ -54,6 +54,7 @@ class LlamaClient:
             with urllib.request.urlopen(self.base_url + "/health", timeout=timeout) as r:
                 return "ok" if r.status == 200 else "loading"
         except urllib.error.HTTPError as e:
+            e.close()
             return "loading" if e.code == 503 else "down"
         except Exception:  # noqa: BLE001
             return "down"
@@ -124,7 +125,8 @@ class LlamaClient:
                             if ev.get(k):
                                 body[k] = ev[k]
             except urllib.error.HTTPError as e:
-                detail = e.read().decode("utf-8", "replace")[:300]
+                with e:
+                    detail = e.read().decode("utf-8", "replace")[:300]
                 if e.code == 503:
                     raise EngineError("loading", f"llama-server loading: {detail}") from e
                 raise EngineError("engine_failure", f"llama-server HTTP {e.code}: {detail}") from e

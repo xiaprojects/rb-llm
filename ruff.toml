@@ -1,0 +1,7 @@
+# Lint config for `make lint` and CI. Target the Pi's Python (Raspberry Pi OS Bookworm = 3.11).
+target-version = "py311"
+line-length = 120
+
+[lint]
+select = ["E", "F", "W", "B"]
+ignore = ["E501"]  # long prompt strings and tables are intentional

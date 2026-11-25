@@ -6,6 +6,7 @@
 #   make catalog         copy rbvoice case files into catalog/
 #   make run             engine + API + web UI in the foreground  ->  http://localhost:8091
 #   make test            unit + server tests (no model needed)
+#   make ci              what GitHub Actions runs: lint + test + validate (pip install ruff jsonschema)
 #   make check-refusal   ask GPS/position questions, report refusals (needs `make run` in another shell)
 #   make install         install as systemd services in /opt/rb-llm (sudo, on the Pi)
 
@@ -22,10 +23,10 @@ WARM_LANG    ?= it
 PREFIX       ?= /opt/rb-llm
 
 .PHONY: help deps llama llama-vulkan model models catalog engine serve run test validate \
-        check-refusal bench install uninstall clean distclean
+        lint coverage ci check-refusal bench install uninstall clean distclean
 
 help:
-	@sed -n '2,12p' Makefile | sed 's/^# \{0,1\}//'
+	@sed -n '2,13p' Makefile | sed 's/^# \{0,1\}//'
 
 # --- setup ------------------------------------------------------------------------------------
 deps:
@@ -79,6 +80,17 @@ test:
 
 validate:
 	$(PYTHON) tools/validate_examples.py
+
+lint:           ## pip install ruff; shellcheck from apt
+	ruff check rbllm tests tools scripts
+	@if command -v shellcheck >/dev/null; then shellcheck --severity=warning scripts/*.sh; \
+	else echo "shellcheck not installed: skipped"; fi
+
+coverage:       ## pip install coverage
+	$(PYTHON) -m coverage run --source=rbllm -m unittest discover -s tests
+	$(PYTHON) -m coverage report -m
+
+ci: lint test validate
 
 check-refusal:
 	$(PYTHON) scripts/refusal_check.py --url http://127.0.0.1:$(PORT)

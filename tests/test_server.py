@@ -8,6 +8,7 @@ import urllib.request
 from helpers import CATALOG_DIR, DEMO, ROOT, FakeEngine, assert_valid
 
 from rbllm.catalog import CatalogStore
+from rbllm.llama_client import EngineError
 from rbllm.server import App, start_background
 from rbllm.status import StatusProvider
 
@@ -25,6 +26,7 @@ class TestServer(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.httpd.shutdown()
+        cls.httpd.server_close()
 
     def call(self, method, path, body=None):
         data = json.dumps(body).encode() if body is not None else None
@@ -35,7 +37,8 @@ class TestServer(unittest.TestCase):
                 raw = r.read()
                 return r.status, r.headers.get("Content-Type", ""), raw
         except urllib.error.HTTPError as e:
-            return e.code, e.headers.get("Content-Type", ""), e.read()
+            with e:
+                return e.code, e.headers.get("Content-Type", ""), e.read()
 
     def json(self, method, path, body=None):
         code, _, raw = self.call(method, path, body)
@@ -109,6 +112,78 @@ class TestServer(unittest.TestCase):
         # the model saw the position, not a refusal-prone raw JSON dump
         prompt = self.engine.calls[-1]["messages"][-1]["content"]
         self.assertIn("gps.position: latitude 43.10466 N", prompt)
+
+    # --- error paths ------------------------------------------------------------------------
+    REQ = {"protocol": "rb-llm/1", "request_id": "3", "lang": "en", "text": "computer cht", "task": "command"}
+
+    def test_unknown_routes(self):
+        self.assertEqual(self.call("GET", "/nope.html")[0], 404)
+        self.assertEqual(self.json("POST", "/v1/nope", {"a": 1})[0], 404)
+        self.assertEqual(self.json("PUT", "/v1/nope", {"a": 1})[0], 404)
+
+    def test_body_must_be_json_object(self):
+        for body in (None, [1, 2]):
+            code, r = self.json("POST", "/v1/parse", body)
+            self.assertEqual((code, r["error"]["code"]), (400, "bad_request"))
+        req = urllib.request.Request(self.base + "/v1/parse", data=b"{not json", method="POST")
+        with self.assertRaises(urllib.error.HTTPError) as cm:
+            urllib.request.urlopen(req, timeout=10)
+        with cm.exception as e:
+            self.assertEqual(e.code, 400)
+        self.assertEqual(self.json("PUT", "/v1/catalog", [1])[0], 400)
+
+    def test_put_catalog_errors(self):
+        code, r = self.json("PUT", "/v1/catalog", {"lang": "en"})
+        self.assertEqual((code, r["error"]["code"]), (400, "bad_request"))
+        code, r = self.json("PUT", "/v1/catalog", {"lang": "xx", "case_file": {"components": {}}})
+        self.assertEqual((code, r["error"]["code"]), (422, "unsupported_lang"))
+
+    def test_get_catalog(self):
+        code, r = self.json("GET", "/v1/catalog/en")
+        self.assertEqual((code, r["lang"]), (200, "en"))
+        code, r = self.json("GET", "/v1/catalog/xx")
+        self.assertEqual((code, r["error"]["code"]), (404, "unsupported_lang"))
+
+    def test_text_limits(self):
+        for text in ("", "   ", "x" * 501):
+            code, r = self.json("POST", "/v1/parse", {**self.REQ, "text": text})
+            self.assertEqual((code, r["error"]["code"]), (400, "bad_request"), repr(text[:10]))
+
+    def test_engine_errors_map_to_http(self):
+        for err, http in (("timeout", 504), ("busy", 503), ("loading", 503), ("engine_failure", 500)):
+            self.engine.outputs = [EngineError(err, "x")]
+            code, r = self.json("POST", "/v1/parse", self.REQ)
+            self.assertEqual((code, r["status"]), (http, "error"), err)
+            assert_valid(self, "parse-response.schema.json", r)
+
+    def test_internal_error_does_not_crash_server(self):
+        class Boom(FakeEngine):
+            def complete_json(self, *a, **k):
+                raise RuntimeError("boom")
+        old, self.app.engine = self.app.engine, Boom()
+        try:
+            code, r = self.json("POST", "/v1/parse", self.REQ)
+        finally:
+            self.app.engine = old
+        self.assertEqual((code, r["error"]["code"]), (500, "internal"))
+        self.assertEqual(self.json("GET", "/v1/health")[0], 200)
+
+    def test_auto_routes_atc(self):
+        self.engine.outputs = [{"kind": "atc", "callsign": "india alpha bravo charlie delta", "station": None,
+                                "instructions": [{"type": "squawk", "value": 7000}]}]
+        code, r = self.json("POST", "/v1/parse", {"protocol": "rb-llm/1", "request_id": "4", "lang": "en",
+                                                 "text": "india alpha bravo charlie delta squawk 7000",
+                                                 "source": "intercom",
+                                                 "context": {"own_callsign": {"registration": "I-ABCD"}}})
+        self.assertEqual((code, r["kind"], r["addressee"]), (200, "atc", "own_aircraft"))
+        assert_valid(self, "parse-response.schema.json", r)
+
+    def test_status_preview(self):
+        with open(DEMO, encoding="utf-8") as f:
+            snap = json.load(f)
+        code, r = self.json("POST", "/v1/status", snap)
+        self.assertEqual((code, r["source"]), (200, "request"))
+        self.assertTrue(r["facts"])
 
 
 if __name__ == "__main__":
